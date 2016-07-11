@@ -1,7 +1,5 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require_relative 'lib/liquid_vector_graphic'
+require_relative 'lib/liquid_vector_graphic/version'
 
 Gem::Specification.new do |spec|
   spec.required_ruby_version  = '>= 2.3.1'
