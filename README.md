@@ -1,8 +1,11 @@
-# Liquid::Vector::Graphic
+# LiquidVectorGraphic
+This library is used for rendering SVG graphics with Liquid/"Solid" logic tags.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/liquid/vector/graphic`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Roadmap
 
-TODO: Delete this and the text above, and describe your gem
+1. Allow interpolation of arbitrary liquid drops via some form of dynamic drop creation (eg: expose arbitrary structures to the template)
+2. Allow the building of forms with basic syntax (eg: form_tag for: 'first_name', label: 'First Name', default: nil, required: true)
+3. Allow scoping via dot-notation for forms (eg form_tag for: '[some_structure].attribute')
 
 ## Installation
 
@@ -33,4 +36,3 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/liquid-vector-graphic. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
