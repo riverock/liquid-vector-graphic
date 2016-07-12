@@ -1,0 +1,19 @@
+<!-- modified from https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/mail.svg -->
+<svg id="svg1468" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" style="float:right">
+  <g stroke-linejoin="round" stroke-linecap="round">
+
+    {% for item in first_object %}
+
+      <text text-anchor="left" x="50" y="{{ 30 | times: forloop.index }}">{{item.first}}: {{item.last}} </text>
+
+    {% endfor %}
+
+    {% for item in second_object %}
+
+      <text text-anchor="left" x="200" y="{{ 30 | times: forloop.index }}">{{item.first}}: {{item.last}} </text>
+
+    {% endfor %}
+
+
+  </g>
+</svg>

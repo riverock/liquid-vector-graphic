@@ -1,0 +1,14 @@
+<!-- modified from https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/mail.svg -->
+<svg id="svg1468" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120" style="float:right">
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <path d="M7,7H113V73H7Z" fill="none" stroke="#000" stroke-width="3"/>
+    <path d="M58,42h45M61,50h42M63,58h40" stroke="#00F" stroke-width="4"/>
+    {% if show_stamp %}
+      <path d="M85,15h18v14h-18z" fill="#FF0" stroke="#00F" stroke-width="2"/> <!-- stamp -->
+    {% endif %}
+    <text text-anchor="middle" x="50" y="30">{{message}}</text>
+    <text text-anchor="middle" x="50" y="30">{% form name: 'image', as: 'select', label: 'name', source: 'dam/for-creative', default: '' %}</text>
+    <text text-anchor="middle" x="50" y="30">{% form name: 'headline', as: 'text', source: ['Good at Participating places', "second affiliate/dma"], default: 'Thanks for things.' %}</text>
+
+  </g>
+</svg>

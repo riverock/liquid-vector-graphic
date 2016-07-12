@@ -1,2 +1,4 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'liquid_vector_graphic'
+require 'support/fixtures'
+require 'pry'
