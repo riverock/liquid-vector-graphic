@@ -23,11 +23,18 @@ module LiquidVectorGraphic
     def form_fields_params
       form_stack.map do |form|
         fdup = form.dup
+        fdup = apply_source_to(fdup)
         [fdup.delete(:name), **fdup]
       end
     end
 
     private
+
+    def apply_source_to(h)
+      return h unless h.has_key?(:source)
+      h.merge!({ collection: FormOptions::Source.new(h.delete(:source)).form_options })
+      h
+    end
 
     def parsed
       Liquid::Template.parse(template)

@@ -8,10 +8,6 @@ module LiquidVectorGraphic
       def display(form_values)
         self.form_values = form_values
 
-        if form_values.keys.include?(:source)
-          FormOptions::Source.new(form_values[:source])
-        end
-
         add_to_form_stack!
       end
 

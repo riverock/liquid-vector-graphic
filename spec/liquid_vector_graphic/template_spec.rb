@@ -17,6 +17,7 @@ describe LiquidVectorGraphic::Template do
         {% form name: 'blar', array: ['one', 2] %}
         {% form name: 'foo', hash: { one: 2, 'three' => '4' } %}
         {% form name: 'bar' %}
+        {% form name: 'foorbar', source: 'foo/bar' %}
       ))
     end
 
@@ -26,6 +27,13 @@ describe LiquidVectorGraphic::Template do
         ['blar', { array: ['one', 2] }],
         ['foo', { hash: { one: 2, 'three' => '4' } }],
         ['bar', {}]
+      )
+    end
+
+    it 'Turns the source into a collection' do
+      subject.render()
+      expect(subject.form_fields_params).to include(
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']]]
       )
     end
 

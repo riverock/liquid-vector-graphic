@@ -2,13 +2,6 @@ module LiquidVectorGraphic
   module FormOptions
     describe Source do
 
-      class ::FooSource
-        def initialize(*); end
-        def form_options
-          []
-        end
-      end
-
       subject { described_class.new(source) }
       let(:foo_source) { FooSource.new('bar') }
       let(:source) { 'foo/bar' }
