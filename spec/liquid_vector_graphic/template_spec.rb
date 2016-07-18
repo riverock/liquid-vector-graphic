@@ -17,7 +17,9 @@ describe LiquidVectorGraphic::Template do
         {% form name: 'blar', array: ['one', 2] %}
         {% form name: 'foo', hash: { one: 2, 'three' => '4' } %}
         {% form name: 'bar' %}
-        {% form name: 'foorbar', source: 'foo/bar' %}
+        {% form name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
+        {% form name: 'zipcode' %}
+        {% form name: 'mycollection', collection: ['Name1', 'Name2'] %}
       ))
     end
 
@@ -26,14 +28,24 @@ describe LiquidVectorGraphic::Template do
       expect(subject.form_fields_params).to include(
         ['blar', { array: ['one', 2] }],
         ['foo', { hash: { one: 2, 'three' => '4' } }],
-        ['bar', {}]
+        ['bar', {}],
+        ['mycollection', { collection: ['Name1', 'Name2'] }]
       )
     end
 
     it 'Turns the source into a collection' do
       subject.render()
       expect(subject.form_fields_params).to include(
-        ['foorbar', collection: [[:id, :name], [1234, 'foobar']]]
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], input_html: { value: 'abcdef' }, as: 'select']
+      )
+    end
+
+    it 'sets value if one has already been selected' do
+      subject.render({ '_form_values' => { 'zipcode' => 12345, 'blar' => 'foobazshoe', 'foorbar' => 'zxcvbnm' } })
+      expect(subject.form_fields_params).to include(
+        ['zipcode', input_html: { value: 12345 }],
+        ['blar', { array: ["one", 2], input_html: { value: 'foobazshoe' } }],
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], input_html: { value: 'zxcvbnm' }, as: 'select']
       )
     end
 
@@ -53,6 +65,23 @@ describe LiquidVectorGraphic::Template do
       let(:opts) { { 'first_object' => { 'arbitrary_string' => 'foobar123' } } }
       subject { super().render(opts) }
       it { is_expected.to include('foobar123') }
+    end
+
+    context 'renders passed in form values' do
+      let(:template_handle) do
+        StringIO.new(%(
+          {% form name: 'blar1' %}
+          {% form name: 'blar2', default: 'foobar' %}
+          {% form name: 'blar3', default: 'barfiz' %}
+        ))
+      end
+
+      let(:opts) { { '_form_values' => { 'blar1' => 'bizbaz', 'blar3' => 'foobarfoo' } } }
+      subject { super().render(opts) }
+      it { is_expected.to include('bizbaz') }
+      it { is_expected.to include('foobar') }
+      it { is_expected.to_not include('barfiz') }
+      it { is_expected.to include('foobarfoo') }
     end
   end
 

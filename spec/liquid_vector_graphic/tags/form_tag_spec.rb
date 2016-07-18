@@ -1,20 +1,33 @@
 describe LiquidVectorGraphic::Tags::FormTag do
-  describe '#form_values' do
-    let(:template) do
-      Solid::Template.parse(%(
-        {% form name: 'name' %}
-      ))
+  describe '#display' do
+    context 'value set' do
+      let(:template) do
+        Solid::Template.parse(%(
+          {% form name: 'foobar321' %}
+        ))
+      end
+
+      let(:form_values) { { 'foobar321' => 'blar' } }
+
+      it 'Renders the value into the template' do
+        out = template.render('_form_values' => form_values, '_form_stack' => [])
+        expect(out).to include('blar')
+      end
     end
 
-    let(:form_values) { { name: 'foobar321' } }
+    context 'default value' do
+      let(:template) do
+        Solid::Template.parse(%(
+          {% form name: 'foobar321', default: 'barbaz' %}
+        ))
+      end
 
-    it 'Renders the value into the template' do
-      out = template.render('_form_values' => form_values, '_form_stack' => [])
-      expect(out).to include('foobar321')
+      it 'Uses a default value if _form_values does not include value for tag' do
+        out = template.render('_form_stack' => [])
+        expect(out).to include('barbaz')
+      end
     end
-
   end
-
 
   describe '#form_stack' do
     let(:form_stack) { [] }
