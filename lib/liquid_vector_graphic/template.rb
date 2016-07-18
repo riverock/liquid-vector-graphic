@@ -9,6 +9,7 @@ module LiquidVectorGraphic
     end
 
     # @param [Hash<String>] send in a hash (with string keys) of output options
+    # @option [Hash] '_form_values' a hash of k/v where k = field(:name from form_tag), v = the selected value from a filled out form.
     # @example Render with arbitrary information sent to template
     #   render('person' => { 'first_name' => 'Nic', 'last_name' => 'Boie' })
     #   will allow the template to interpolate {{ person.first_name }} and {{ person.last_name }}
