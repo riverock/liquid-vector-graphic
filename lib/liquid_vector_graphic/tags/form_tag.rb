@@ -3,10 +3,10 @@ module LiquidVectorGraphic
     class FormTag < Solid::Tag
       tag_name :form
 
-      attr_accessor :form_values
+      attr_accessor :form_tag_options
 
-      def display(form_values)
-        self.form_values = form_values
+      def display(form_tag_options)
+        self.form_tag_options = form_tag_options
 
         add_to_form_stack!
       end
@@ -15,8 +15,10 @@ module LiquidVectorGraphic
         current_context.environments.first['_form_stack']
       end
 
+      
+
       def add_to_form_stack!
-        form_stack << form_values
+        form_stack << form_tag_options
       end
 
     end
