@@ -27,6 +27,7 @@ module LiquidVectorGraphic
         fdup = form.dup
         fdup = apply_source_to(fdup)
         fdup = apply_value_to(fdup)
+        fdup = apply_required_to(fdup)
         [fdup.delete(:name), **fdup]
       end
     end
@@ -35,13 +36,18 @@ module LiquidVectorGraphic
 
     def apply_source_to(h)
       return h unless h.has_key?(:source)
-      h.merge!({ collection: FormOptions::Source.new(h.delete(:source)).form_options })
+      h.deep_merge!({ collection: FormOptions::Source.new(h.delete(:source)).form_options })
     end
 
     def apply_value_to(h)
       return h unless form_values[h[:name]].present? || h[:default].present?
       default = h.delete(:default)
-      h.merge!({ input_html: { value: form_values[h[:name]] || default } })
+      h.deep_merge!({ input_html: { value: form_values[h[:name]] || default } })
+    end
+
+    def apply_required_to(h)
+      return h unless h[:required].present?
+      h.deep_merge!({ input_html: { required: h.delete(:required) } })
     end
 
     def parsed

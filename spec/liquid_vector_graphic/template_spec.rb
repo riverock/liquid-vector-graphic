@@ -20,6 +20,7 @@ describe LiquidVectorGraphic::Template do
         {% form name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
         {% form name: 'zipcode' %}
         {% form name: 'mycollection', collection: ['Name1', 'Name2'] %}
+        {% form name: 'required_field', required: true %}
       ))
     end
 
@@ -29,7 +30,8 @@ describe LiquidVectorGraphic::Template do
         ['blar', { array: ['one', 2] }],
         ['foo', { hash: { one: 2, 'three' => '4' } }],
         ['bar', {}],
-        ['mycollection', { collection: ['Name1', 'Name2'] }]
+        ['mycollection', { collection: ['Name1', 'Name2'] }],
+        ['required_field', input_html: { required: true }]
       )
     end
 
