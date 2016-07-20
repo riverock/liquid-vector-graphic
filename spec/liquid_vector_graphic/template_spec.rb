@@ -14,13 +14,13 @@ describe LiquidVectorGraphic::Template do
   describe '#form_fields_params' do
     let(:template_handle) do
       StringIO.new(%(
-        {% form name: 'blar', array: ['one', 2] %}
-        {% form name: 'foo', hash: { one: 2, 'three' => '4' } %}
-        {% form name: 'bar' %}
-        {% form name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
-        {% form name: 'zipcode' %}
-        {% form name: 'mycollection', collection: ['Name1', 'Name2'] %}
-        {% form name: 'required_field', required: true %}
+        {% form_field name: 'blar', array: ['one', 2] %}
+        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' } %}
+        {% form_field name: 'bar' %}
+        {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
+        {% form_field name: 'zipcode' %}
+        {% form_field name: 'mycollection', collection: ['Name1', 'Name2'] %}
+        {% form_field name: 'required_field', required: true %}
       ))
     end
 
@@ -72,9 +72,9 @@ describe LiquidVectorGraphic::Template do
     context 'renders passed in form values' do
       let(:template_handle) do
         StringIO.new(%(
-          {% form name: 'blar1' %}
-          {% form name: 'blar2', default: 'foobar' %}
-          {% form name: 'blar3', default: 'barfiz' %}
+          {% form_field name: 'blar1' %}
+          {% form_field name: 'blar2', default: 'foobar' %}
+          {% form_field name: 'blar3', default: 'barfiz' %}
         ))
       end
 

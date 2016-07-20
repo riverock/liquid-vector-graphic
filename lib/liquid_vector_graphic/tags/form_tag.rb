@@ -1,7 +1,7 @@
 module LiquidVectorGraphic
   module Tags
     class FormTag < Solid::Tag
-      tag_name :form
+      tag_name :form_field
 
       attr_accessor :form_tag_options
 

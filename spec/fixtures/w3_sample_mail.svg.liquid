@@ -7,8 +7,8 @@
       <path d="M85,15h18v14h-18z" fill="#FF0" stroke="#00F" stroke-width="2"/> <!-- stamp -->
     {% endif %}
     <text text-anchor="middle" x="50" y="30">{{message}}</text>
-    <text text-anchor="middle" x="50" y="30">{% form name: 'image', as: 'select', label: 'name', source: 'dam/for-creative', default: '' %}</text>
-    <text text-anchor="middle" x="50" y="30">{% form name: 'headline', as: 'text', source: ['Good at Participating places', "second affiliate/dma"], default: 'Thanks for things.' %}</text>
+    <text text-anchor="middle" x="50" y="30">{% form_field name: 'image', as: 'select', label: 'name', source: 'dam/for-creative', default: '' %}</text>
+    <text text-anchor="middle" x="50" y="30">{% form_field name: 'headline', as: 'text', source: ['Good at Participating places', "second affiliate/dma"], default: 'Thanks for things.' %}</text>
 
   </g>
 </svg>

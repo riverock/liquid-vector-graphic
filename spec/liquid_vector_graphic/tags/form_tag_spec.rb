@@ -3,7 +3,7 @@ describe LiquidVectorGraphic::Tags::FormTag do
     context 'value set' do
       let(:template) do
         Solid::Template.parse(%(
-          {% form name: 'foobar321' %}
+          {% form_field name: 'foobar321' %}
         ))
       end
 
@@ -18,7 +18,7 @@ describe LiquidVectorGraphic::Tags::FormTag do
     context 'default value' do
       let(:template) do
         Solid::Template.parse(%(
-          {% form name: 'foobar321', default: 'barbaz' %}
+          {% form_field name: 'foobar321', default: 'barbaz' %}
         ))
       end
 
@@ -33,9 +33,9 @@ describe LiquidVectorGraphic::Tags::FormTag do
     let(:form_stack) { [] }
     let(:template) do
       Solid::Template.parse(%(
-        {% form name: 'blar', array: ['one', 2] %}
-        {% form name: 'foo', hash: { one: 2, 'three' => '4' } %}
-        {% form name: 'bar' %}
+        {% form_field name: 'blar', array: ['one', 2] %}
+        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' } %}
+        {% form_field name: 'bar' %}
       ))
     end
 
