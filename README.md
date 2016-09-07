@@ -6,6 +6,7 @@ This library is used for rendering SVG graphics with Liquid/"Solid" logic tags.
 1. Allow interpolation of arbitrary liquid drops via some form of dynamic drop creation (eg: expose arbitrary structures to the template)
 2. Allow the building of forms with basic syntax (eg: form_tag for: 'first_name', label: 'First Name', default: nil, required: true)
 3. Allow scoping via dot-notation for forms (eg form_tag for: '[some_structure].attribute')
+4. Create module for URL access (eg [module]/path/to/something) as an API exposure to the template
 
 ## Installation
 
