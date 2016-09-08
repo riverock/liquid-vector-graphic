@@ -31,6 +31,34 @@ module LiquidVectorGraphic
           raise InvalidMethodError, "The method specified is not supported."
         end
       end
+
+      def past_date
+        calculated_date(:prev_day).strftime("%Y-%m-%d")
+      end
+
+      def future_date
+        calculated_date(:next_day).strftime("%Y-%m-%d")
+      end
+
+      def past_datetime
+        calculated_date(:prev_day).strftime("%Y-%m-%dT%H:%M:%S")
+      end
+
+      def future_datetime
+        calculated_date(:next_day).strftime("%Y-%m-%dT%H:%M:%S")
+      end
+
+      def raw_value
+        form_values[current_tag_name] || raise(Exception)
+      end
+
+      def base_date
+        current_context.environments.first['_base_date']
+      end
+
+      def calculated_date(operation)
+        (base_date || Date.today).send(operation, raw_value.to_i)
+      end
     end
   end
 end

@@ -7,8 +7,8 @@ module LiquidVectorGraphic
       let(:method) { 'past_date' }
       let(:query) { "SELECT * FROM foo WHERE field >= #{query_field}" }
       let(:template) { Solid::Template.parse(query) }
-      let(:form_values) { { 'foo_bar' => 10 } }
-      let(:query_tag) { template.nodelist.last }
+      let(:form_values) { { 'foo_bar' => '10' } }
+      let(:query_tag) { template.nodelist[1] }
       let(:opts) { { '_form_values' => form_values, '_form_stack' => [] } }
 
       specify { expect(described_class.tag_name).to eq :query_field }
@@ -39,6 +39,109 @@ module LiquidVectorGraphic
 
           it 'renders using default behavior' do
             expect(template.render(opts)).to eq "SELECT * FROM foo WHERE field >= 10"
+          end
+        end
+
+        context "date calculations" do
+          let(:expected_query) do
+            "SELECT * FROM foo WHERE field >= DATE '#{expected_date}'"
+          end
+
+          context 'past_date method' do
+            let(:query) { "SELECT * FROM foo WHERE field >= DATE '#{query_field}'" }
+            let(:base_date) { nil }
+            let(:expected_date) do
+              calculated_date = (base_date || Date.today)
+              calculated_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%d")
+            end
+
+            it 'calculates correct date based on Date.today' do
+              expect(template.render(opts)).to eq expected_query
+            end
+
+            context '_base_date passed in' do
+              let(:base_date) { Date.today.next_day(2) }
+              let(:new_opts) { opts.merge({ '_base_date' => base_date }) }
+
+              it 'calculates correct date based on _base_date' do
+                expect(template.render(new_opts)).to eq expected_query
+              end
+            end
+          end
+
+          context 'future_date method' do
+            let(:query) { "SELECT * FROM foo WHERE field >= DATE '#{query_field}'" }
+            let(:method) { 'future_date' }
+            let(:base_date) { nil }
+            let(:expected_date) do
+              calculated_date = (base_date || Date.today)
+              calculated_date.next_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%d")
+            end
+
+            it 'calculates correct date based on Date.today' do
+              expect(template.render(opts)).to eq expected_query
+            end
+
+            context '_base_date passed in' do
+              let(:base_date) { Date.today.next_day(2) }
+              let(:new_opts) { opts.merge({ '_base_date' => base_date }) }
+
+              it 'calculates correct date based on _base_date' do
+                expect(template.render(new_opts)).to eq expected_query
+              end
+            end
+          end
+        end
+
+        context "datetime calculations" do
+          let(:expected_query) do
+            "SELECT * FROM foo WHERE field >= TIMESTAMP '#{expected_date}'"
+          end
+
+          context 'past_datetime method' do
+            let(:query) { "SELECT * FROM foo WHERE field >= TIMESTAMP '#{query_field}'" }
+            let(:method) { 'past_datetime' }
+            let(:base_date) { nil }
+            let(:expected_date) do
+              calculated_date = (base_date || Date.today)
+              calculated_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
+            end
+
+            it 'calculates correct date based on Date.today' do\
+              expect(template.render(opts)).to eq expected_query
+            end
+
+            context '_base_date passed in' do
+              let(:base_date) { Date.today.next_day(2) }
+              let(:new_opts) { opts.merge({ '_base_date' => base_date }) }
+
+              it 'calculates correct date based on _base_date' do
+                expect(template.render(new_opts)).to eq expected_query
+              end
+            end
+          end
+
+          context 'future_datetime method' do
+            let(:query) { "SELECT * FROM foo WHERE field >= TIMESTAMP '#{query_field}'" }
+            let(:method) { 'future_datetime' }
+            let(:base_date) { nil }
+            let(:expected_date) do
+              calculated_date = (base_date || Date.today)
+              calculated_date.next_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
+            end
+
+            it 'calculates correct date based on Date.today' do
+              expect(template.render(opts)).to eq expected_query
+            end
+
+            context '_base_date passed in' do
+              let(:base_date) { Date.today.next_day(2) }
+              let(:new_opts) { opts.merge({ '_base_date' => base_date }) }
+
+              it 'calculates correct date based on _base_date' do
+                expect(template.render(new_opts)).to eq expected_query
+              end
+            end
           end
         end
       end
