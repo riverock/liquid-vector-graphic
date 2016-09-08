@@ -4,6 +4,7 @@ module LiquidVectorGraphic
       let(:query_field) do
         "{% query_field name: 'foo_bar', collection: [10, 20], method: '#{method}' %}"
       end
+      let(:base_date) { nil }
       let(:method) { 'past_date' }
       let(:query) { "SELECT * FROM foo WHERE field >= #{query_field}" }
       let(:template) { Solid::Template.parse(query) }
@@ -46,10 +47,9 @@ module LiquidVectorGraphic
           let(:expected_query) do
             "SELECT * FROM foo WHERE field >= DATE '#{expected_date}'"
           end
+          let(:query) { "SELECT * FROM foo WHERE field >= DATE '#{query_field}'" }
 
           context 'past_date method' do
-            let(:query) { "SELECT * FROM foo WHERE field >= DATE '#{query_field}'" }
-            let(:base_date) { nil }
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
               calculated_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%d")
@@ -70,9 +70,7 @@ module LiquidVectorGraphic
           end
 
           context 'future_date method' do
-            let(:query) { "SELECT * FROM foo WHERE field >= DATE '#{query_field}'" }
             let(:method) { 'future_date' }
-            let(:base_date) { nil }
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
               calculated_date.next_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%d")
@@ -97,11 +95,10 @@ module LiquidVectorGraphic
           let(:expected_query) do
             "SELECT * FROM foo WHERE field >= TIMESTAMP '#{expected_date}'"
           end
+          let(:query) { "SELECT * FROM foo WHERE field >= TIMESTAMP '#{query_field}'" }
 
           context 'past_datetime method' do
-            let(:query) { "SELECT * FROM foo WHERE field >= TIMESTAMP '#{query_field}'" }
             let(:method) { 'past_datetime' }
-            let(:base_date) { nil }
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
               calculated_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
@@ -122,9 +119,7 @@ module LiquidVectorGraphic
           end
 
           context 'future_datetime method' do
-            let(:query) { "SELECT * FROM foo WHERE field >= TIMESTAMP '#{query_field}'" }
             let(:method) { 'future_datetime' }
-            let(:base_date) { nil }
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
               calculated_date.next_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
