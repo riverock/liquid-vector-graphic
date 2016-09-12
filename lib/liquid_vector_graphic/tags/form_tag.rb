@@ -1,5 +1,7 @@
 module LiquidVectorGraphic
   module Tags
+    class NoNameOnFormTagError < Exception; end
+
     class FormTag < Solid::Tag
       tag_name :form_field
 
@@ -25,7 +27,8 @@ module LiquidVectorGraphic
       end
 
       def current_tag_name
-        form_tag_options[:name].presence || raise(Exception)
+        form_tag_options[:name].presence ||
+          raise(NoNameOnFormTagError, "name key must be present on form_field")
       end
 
       def add_to_form_stack!

@@ -49,6 +49,28 @@ module LiquidVectorGraphic
           end
           let(:query) { "SELECT * FROM foo WHERE field >= DATE '#{query_field}'" }
 
+          context "no _form_values passed in no default value present" do
+            let(:expected_query) do
+              "SELECT * FROM foo WHERE field >= DATE ''"
+            end
+
+            it "renders empty string" do
+              expect(template.render({ '_form_stack' => [] })).to eq expected_query
+            end
+          end
+
+          context "no _form_values passed in default value is present" do
+            let(:default_value) { '30' }
+            let(:expected_date) { Date.today.prev_day(default_value.to_i).strftime('%Y-%m-%d') }
+            let(:query_field) do
+              "{% query_field name: 'foo_bar', collection: [10, 20], method: '#{method}', default: #{default_value} %}"
+            end
+
+            it "renders value based off default value" do
+              expect(template.render({ '_form_stack' => [] })).to eq expected_query
+            end
+          end
+
           context 'past_date method' do
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
