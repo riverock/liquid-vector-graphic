@@ -40,6 +40,7 @@ module LiquidVectorGraphic
     end
 
     def apply_value_to(h)
+      return apply_select_default_to(h) if h[:as] == 'select'
       return h unless form_values[h[:name]].present? || h[:default].present?
       default = h.delete(:default)
       h.deep_merge!({ input_html: { value: form_values[h[:name]] || default } })
@@ -48,6 +49,11 @@ module LiquidVectorGraphic
     def apply_required_to(h)
       return h unless h[:required].present?
       h.deep_merge!({ input_html: { required: h.delete(:required) } })
+    end
+
+    def apply_select_default_to(h)
+      default = h.delete(:default)
+      h.deep_merge!({ selected: form_values[h[:name]] || default })
     end
 
     def parsed
