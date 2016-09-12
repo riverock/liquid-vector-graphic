@@ -15,7 +15,7 @@ module LiquidVectorGraphic
       end
 
       def form_value
-        if method = form_tag_options.delete(:method)
+        if (method = form_tag_options.delete(:method)) && raw_value.present?
           verify_and_call(method.to_sym)
         else
           super
@@ -49,7 +49,9 @@ module LiquidVectorGraphic
       end
 
       def raw_value
-        form_values[current_tag_name] || raise(Exception)
+        form_values.fetch(current_tag_name) do
+          form_tag_options[:default]
+        end
       end
 
       def base_date
