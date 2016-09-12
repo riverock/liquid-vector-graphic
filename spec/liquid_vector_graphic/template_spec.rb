@@ -18,6 +18,7 @@ describe LiquidVectorGraphic::Template do
         {% form_field name: 'foo', hash: { one: 2, 'three' => '4' } %}
         {% form_field name: 'bar' %}
         {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
+        {% form_field name: 'fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], default: ['1', '3'], as: 'select', multiple: true %}
         {% form_field name: 'zipcode' %}
         {% form_field name: 'mycollection', collection: ['Name1', 'Name2'] %}
         {% form_field name: 'required_field', required: true %}
@@ -38,7 +39,7 @@ describe LiquidVectorGraphic::Template do
     it 'Turns the source into a collection' do
       subject.render()
       expect(subject.form_fields_params).to include(
-        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], input_html: { value: 'abcdef' }, as: 'select']
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], selected: 'abcdef', as: 'select']
       )
     end
 
@@ -47,7 +48,14 @@ describe LiquidVectorGraphic::Template do
       expect(subject.form_fields_params).to include(
         ['zipcode', input_html: { value: 12345 }],
         ['blar', { array: ["one", 2], input_html: { value: 'foobazshoe' } }],
-        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], input_html: { value: 'zxcvbnm' }, as: 'select']
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], selected: 'zxcvbnm', as: 'select']
+      )
+    end
+
+    it 'sets multiple default values for multiple select' do
+      subject.render
+      expect(subject.form_fields_params).to include(
+        ['fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], selected: ['1', '3'], as: 'select', multiple: true]
       )
     end
 
