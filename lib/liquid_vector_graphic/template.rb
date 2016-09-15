@@ -43,7 +43,6 @@ module LiquidVectorGraphic
       fdup = apply_value_to(fdup)
       fdup = apply_required_to(fdup)
       fdup = remove_position_from(fdup)
-      fdup = remove_group_name_from(fdup)
       [fdup.delete(:name), **fdup]
     end
 
