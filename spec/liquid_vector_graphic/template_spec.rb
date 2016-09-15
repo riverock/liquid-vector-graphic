@@ -14,18 +14,24 @@ describe LiquidVectorGraphic::Template do
   describe '#form_fields_params' do
     let(:template_handle) do
       StringIO.new(%(
-        {% form_field name: 'blar', array: ['one', 2] %}
-        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' } %}
-        {% form_field name: 'bar' %}
+        {% form_field name: 'blar', array: ['one', 2], position: 158 %}
+        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 28 %}
+        {% form_field name: 'bar', position: 20 %}
         {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
         {% form_field name: 'fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], default: ['1', '3'], as: 'select', multiple: true %}
         {% form_field name: 'zipcode' %}
         {% form_field name: 'mycollection', collection: ['Name1', 'Name2'] %}
         {% form_field name: 'required_field', required: true %}
+        {% form_field name: 'ordered_field', barfoo: 'blar', position: 0 %}
       ))
     end
 
-    it 'Returns an array of form field parameters' do
+    let(:expected_name_order) do
+      %w(ordered_field bar foo blar fizbaz_multiple foorbar mycollection required_field zipcode)
+    end
+
+    it 'returns an array of form field parameters' do
+
       subject.render()
       expect(subject.form_fields_params).to include(
         ['blar', { array: ['one', 2] }],
@@ -34,6 +40,20 @@ describe LiquidVectorGraphic::Template do
         ['mycollection', { collection: ['Name1', 'Name2'] }],
         ['required_field', input_html: { required: true }]
       )
+    end
+
+    it 'orders the array based on the position attribute' do
+      subject.render()
+      names = subject.form_fields_params.map { |form| form.first }
+
+      expect(names).to eq expected_name_order
+    end
+
+    it 'removes the position key' do
+      subject.render()
+      fields = subject.form_fields_params
+      ordered_field = fields.find { |f| f[0] == 'ordered_field' }
+      expect(ordered_field).to eq ['ordered_field', barfoo: 'blar']
     end
 
     it 'Turns the source into a collection' do
