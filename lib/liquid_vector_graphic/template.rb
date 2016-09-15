@@ -23,16 +23,24 @@ module LiquidVectorGraphic
     end
 
     def form_fields_params
-      form_stack.map do |form|
-        fdup = form.dup
+      sorted_form_stack.map do |form_field|
+        fdup = form_field.dup
         fdup = apply_source_to(fdup)
         fdup = apply_value_to(fdup)
         fdup = apply_required_to(fdup)
+        fdup = remove_position_from(fdup)
         [fdup.delete(:name), **fdup]
       end
     end
 
     private
+
+    def sorted_form_stack
+      form_stack.sort_by! do |form_field|
+        [ position_for(form_field),
+          form_field[:name] ]
+      end
+    end
 
     def apply_source_to(h)
       return h unless h.has_key?(:source)
@@ -56,8 +64,18 @@ module LiquidVectorGraphic
       h.deep_merge!({ selected: form_values[h[:name]] || default })
     end
 
+    def remove_position_from(h)
+      h.delete(:position)
+      h
+    end
+
     def parsed
       Liquid::Template.parse(template)
+    end
+
+    def position_for(form_field)
+      return 1000 if form_field[:position].blank?
+      form_field[:position].to_i
     end
   end
 
