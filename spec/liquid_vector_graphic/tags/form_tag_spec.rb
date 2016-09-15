@@ -51,20 +51,23 @@ module LiquidVectorGraphic
         let(:form_stack) { [] }
         let(:template) do
           Solid::Template.parse(%(
-            {% form_field name: 'blar', array: ['one', 2] %}
-            {% form_field name: 'foo', hash: { one: 2, 'three' => '4' } %}
-            {% form_field name: 'bar' %}
+            {% form_field name: 'blar', array: ['one', 2], position: 0 %}
+            {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 500 %}
+            {% form_field name: 'bar', position: 1 %}
+            {% form_field name: 'z_no_position' %}
+            {% form_field name: 'a_no_position' %}
           ))
         end
 
         it 'adds form elements to the form_stack' do
           template.render('_form_stack' => form_stack)
           expect(form_stack).to include(
-            { name: 'blar', array: ['one', 2] },
-            { name: 'foo', hash: { one: 2, 'three' => '4' } },
-            { name: 'bar' }
+            { name: 'blar', array: ['one', 2], position: 0 },
+            { name: 'foo', hash: { one: 2, 'three' => '4' }, position: 500 },
+            { name: 'bar', position: 1 }
           )
         end
+
       end
     end
   end
