@@ -14,10 +14,10 @@ describe LiquidVectorGraphic::Template do
   describe '#form_fields_params' do
     let(:template_handle) do
       StringIO.new(%(
-        {% form_field name: 'blar', array: ['one', 2], position: 158 %}
-        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 28 %}
-        {% form_field name: 'bar', position: 20 %}
-        {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select' %}
+        {% form_field name: 'blar', array: ['one', 2], position: 158, group_name: 'Group 1' %}
+        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 28, group_name: 'Group 2' %}
+        {% form_field name: 'bar', position: 20, group_name: 'Group 1' %}
+        {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select', group_name: 'Group 2' %}
         {% form_field name: 'fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], default: ['1', '3'], as: 'select', multiple: true %}
         {% form_field name: 'zipcode' %}
         {% form_field name: 'mycollection', collection: ['Name1', 'Name2'] %}
@@ -31,7 +31,6 @@ describe LiquidVectorGraphic::Template do
     end
 
     it 'returns an array of form field parameters' do
-
       subject.render()
       expect(subject.form_fields_params).to include(
         ['blar', { array: ['one', 2] }],
@@ -47,6 +46,25 @@ describe LiquidVectorGraphic::Template do
       names = subject.form_fields_params.map { |form| form.first }
 
       expect(names).to eq expected_name_order
+    end
+
+    context 'grouped form fields' do
+      let(:groups) do
+        subject.render
+        subject.grouped_form_fields_params
+      end
+
+      it 'groups fields based on group_name' do
+        expect(groups.keys).to include('Default', 'Group 1', 'Group 2')
+      end
+
+      it 'removes the group_name key' do
+        args_keys = groups.values.inject([]) do |new_array, old_array|
+          new_array << old_array.map { |a| a.last.keys }
+        end.flatten
+
+        expect(args_keys).to_not include(:group_name)
+      end
     end
 
     it 'removes the position key' do
