@@ -60,9 +60,8 @@ describe LiquidVectorGraphic::Template do
 
       it 'removes the group_name key' do
         args_keys = groups.values.inject([]) do |new_array, old_array|
-          new_array << old_array.map { |a| a.last.keys }
-        end.flatten
-
+          new_array << old_array.map { |a| a.keys }
+        end.flatten.uniq
         expect(args_keys).to_not include(:group_name)
       end
     end

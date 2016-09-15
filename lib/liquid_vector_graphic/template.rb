@@ -25,13 +25,14 @@ module LiquidVectorGraphic
     def grouped_form_fields_params
       grouped_fields = sorted_form_stack.map do |form_field|
         common_field_cleanup(form_field)
-      end.group_by { |f| f.last[:group_name] }
+      end.group_by { |h| h.delete(:group_name) }
       grouped_fields.merge("Default" => grouped_fields.delete(nil))
     end
 
     def form_fields_params
       sorted_form_stack.map do |form_field|
-        common_field_cleanup(form_field)
+        form_field = common_field_cleanup(form_field)
+        [form_field.delete(:name), **remove_group_name_from(form_field)]
       end
     end
 
@@ -43,7 +44,7 @@ module LiquidVectorGraphic
       fdup = apply_value_to(fdup)
       fdup = apply_required_to(fdup)
       fdup = remove_position_from(fdup)
-      [fdup.delete(:name), **fdup]
+      fdup
     end
 
     def sorted_form_stack
