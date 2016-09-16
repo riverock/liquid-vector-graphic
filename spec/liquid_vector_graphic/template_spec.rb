@@ -14,8 +14,8 @@ describe LiquidVectorGraphic::Template do
   describe '#form_fields_params' do
     let(:template_handle) do
       StringIO.new(%(
-        {% form_field name: 'blar', array: ['one', 2], position: 158, group_name: 'Group 1', group_position: 1 %}
-        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 28, group_name: 'Group 2', group_position: 2 %}
+        {% form_field name: 'blar', array: ['one', 2], position: 158, group_name: 'Group 1', group_position: 20 %}
+        {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 28, group_name: 'Group 2', group_position: 10 %}
         {% form_field name: 'bar', position: 20, group_name: 'Group 1', group_position: 3 %}
         {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select', group_name: 'Group 2' %}
         {% form_field name: 'fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], default: ['1', '3'], as: 'select', multiple: true %}
@@ -76,12 +76,13 @@ describe LiquidVectorGraphic::Template do
       end
 
       it 'assigns group position value based on last field processed for group based on position' do
+        subject.render
         subject.grouped_form_fields_params
-        expect(subject.group_positions).to eq({ 'Default' => 0, 'Group 1' => 1, 'Group 2' => 2 })
+        expect(subject.send(:form_group_order)).to eq([{'Group 2' => 10}, { 'Group 1' => 20 }, { 'Default' => 1000 }])
       end
 
       it 'orders groups by group_position' do
-        expect(groups.keys).to eq ['Default', 'Group 2', 'Group 1']
+        expect(groups.keys).to eq ['Group 2', 'Group 1', 'Default']
       end
     end
 
