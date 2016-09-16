@@ -22,18 +22,30 @@ module LiquidVectorGraphic
       @form_stack ||= []
     end
 
+    def grouped_form_fields_params
+      grouped_fields = sorted_form_stack.map do |form_field|
+        common_field_cleanup(form_field)
+      end.group_by { |h| h.delete(:group_name) }
+      formtasticize_groups(grouped_fields.merge("Default" => grouped_fields.delete(nil)))
+    end
+
     def form_fields_params
       sorted_form_stack.map do |form_field|
-        fdup = form_field.dup
-        fdup = apply_source_to(fdup)
-        fdup = apply_value_to(fdup)
-        fdup = apply_required_to(fdup)
-        fdup = remove_position_from(fdup)
-        [fdup.delete(:name), **fdup]
+        form_field = common_field_cleanup(form_field)
+        [form_field.delete(:name), **remove_group_name_from(form_field)]
       end
     end
 
     private
+
+    def common_field_cleanup(form_field)
+      fdup = form_field.dup
+      fdup = apply_source_to(fdup)
+      fdup = apply_value_to(fdup)
+      fdup = apply_required_to(fdup)
+      fdup = remove_position_from(fdup)
+      fdup
+    end
 
     def sorted_form_stack
       form_stack.sort_by! do |form_field|
@@ -69,6 +81,19 @@ module LiquidVectorGraphic
       h
     end
 
+    def remove_group_name_from(h)
+      h.delete(:group_name)
+      h
+    end
+
+    def formtasticize_groups(groups)
+      groups.inject({}) do |new_hash, array|
+        new_hash.merge!({
+          array[0] => array[1].map { |v| [v.delete(:name), **v] }
+        })
+      end
+    end
+
     def parsed
       Liquid::Template.parse(template)
     end
@@ -78,5 +103,4 @@ module LiquidVectorGraphic
       form_field[:position].to_i
     end
   end
-
 end
