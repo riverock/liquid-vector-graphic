@@ -26,7 +26,8 @@ module LiquidVectorGraphic
       grouped_fields = sorted_form_stack.map do |form_field|
         common_field_cleanup(form_field)
       end.group_by { |h| h.delete(:group_name) }
-      formtasticize_groups(grouped_fields.merge("Default" => grouped_fields.delete(nil)))
+      grouped_fields = formtasticize_groups(grouped_fields.merge("Default" => grouped_fields.delete(nil)))
+      order_grouped_fields(grouped_fields)
     end
 
     def form_fields_params
@@ -34,6 +35,10 @@ module LiquidVectorGraphic
         form_field = common_field_cleanup(form_field)
         [form_field.delete(:name), **remove_group_name_from(form_field)]
       end
+    end
+
+    def group_positions
+      @group_positions ||= {}
     end
 
     private
@@ -44,6 +49,7 @@ module LiquidVectorGraphic
       fdup = apply_value_to(fdup)
       fdup = apply_required_to(fdup)
       fdup = remove_position_from(fdup)
+      fdup = remove_group_position_from(fdup)
       fdup
     end
 
@@ -86,12 +92,29 @@ module LiquidVectorGraphic
       h
     end
 
+    def remove_group_position_from(h)
+      group_key = h[:group_name].presence || 'Default'
+      position = h.delete(:group_position).to_i
+      group_positions.merge!({ group_key => position.to_i })
+      h
+    end
+
     def formtasticize_groups(groups)
+      binding.pry
       groups.inject({}) do |new_hash, array|
         new_hash.merge!({
           array[0] => array[1].map { |v| [v.delete(:name), **v] }
         })
       end
+    end
+
+    def order_grouped_fields(groups)
+      ordered_positions = group_positions.sort_by { |_, v| v }
+      ordered_groups = {}
+      ordered_positions.each do |k, _|
+        ordered_groups.deep_merge!({ k => groups[k] })
+      end
+      ordered_groups
     end
 
     def parsed
