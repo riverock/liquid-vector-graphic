@@ -60,9 +60,19 @@ describe LiquidVectorGraphic::Template do
 
       it 'removes the group_name key' do
         args_keys = groups.values.inject([]) do |new_array, old_array|
-          new_array << old_array.map { |a| a.keys }
+          new_array << old_array.map { |a| a.last.keys }
         end.flatten.uniq
         expect(args_keys).to_not include(:group_name)
+      end
+
+      it 'returns array of form_fields with correct structure' do
+        values = groups.values.inject([]) { |a, value| value.each { |v| a << v }; a }
+        aggregate_failures do
+          expect(values.count).to eq subject.form_stack.count
+          values.each do |value|
+            expect(value).to include(a_kind_of(String)).and include(a_kind_of(Hash))
+          end
+        end
       end
     end
 
