@@ -4,29 +4,21 @@ module LiquidVectorGraphic
       class SourceClassMissing < NameError; end
       class SourceClassResponseInvalid < StandardError; end
 
-      attr_accessor :class_prefix, :scope
-      
-      def initialize(source_options)
+      attr_accessor :source_key, :scope, :parent
+
+      def initialize(source_options, parent)
         raise ArgumentError if (source_options.split(?/).count > 2)
-        self.class_prefix, self.scope = source_options.split(?/)
+        self.source_key, self.scope = source_options.split(?/)
+        self.parent = parent
       end
 
       def form_options
-        opts = source_klass.new(scope).form_options
-        unless opts.kind_of?(Array)
-          raise SourceClassResponseInvalid, 'The source class should respond to #form_options with an array.'
-        end
-        opts
+        parent.sources[source_key].form_options.send(scope)
       end
 
       private
 
-      def source_klass
-        klass_name = "#{class_prefix.classify}Source"
-        klass_name.constantize
-      rescue NameError
-        raise SourceClassMissing, "You need to define a class #{klass_name} with #form_options"
-      end
+
 
     end
   end

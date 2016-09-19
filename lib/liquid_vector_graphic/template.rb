@@ -1,6 +1,6 @@
 module LiquidVectorGraphic
   class Template
-    attr_accessor :template, :form_values
+    attr_accessor :template, :form_values, :parent
 
     # @param [File] a templatized Liquid SVG file to render
     # @note the file parameter can be any stream object.  Make sure to rewind before sending.
@@ -15,6 +15,7 @@ module LiquidVectorGraphic
     #   will allow the template to interpolate {{ person.first_name }} and {{ person.last_name }}
     def render(opts = {})
       self.form_values = opts['_form_values'] || {}
+      self.parent = opts['_parent'] || {}
       parsed.render(opts.merge('_form_stack' => form_stack))
     end
 
@@ -78,7 +79,7 @@ module LiquidVectorGraphic
 
     def apply_source_to(h)
       return h unless h.has_key?(:source)
-      h.deep_merge!({ collection: FormOptions::Source.new(h.delete(:source)).form_options })
+      h.deep_merge!({ collection: FormOptions::Source.new(h.delete(:source), parent: parent).form_options })
     end
 
     def apply_value_to(h)
