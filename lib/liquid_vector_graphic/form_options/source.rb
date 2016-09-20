@@ -4,17 +4,17 @@ module LiquidVectorGraphic
       class SourceClassMissing < NameError; end
       class SourceClassResponseInvalid < StandardError; end
 
-      attr_accessor :source_key, :scope, :parent
+      attr_accessor :resource, :scope, :parent
 
       def initialize(source_options, parent)
         raise ArgumentError if (source_options.split(?/).count > 2)
-        self.source_key, self.scope = source_options.split(?/)
+        self.resource, self.scope = source_options.split(?/)
         self.parent = parent
       end
 
       def form_options
         if parent.present?
-          parent.sources[source_key].form_options.send(scope)
+          parent.source_for(resource, scope).form_options
         else
           []
         end
