@@ -13,13 +13,12 @@ module LiquidVectorGraphic
       end
 
       def form_options
-        parent.sources[source_key].form_options.send(scope)
+        if parent.present?
+          parent.sources[source_key].form_options.send(scope)
+        else
+          []
+        end
       end
-
-      private
-
-
-
     end
   end
 end

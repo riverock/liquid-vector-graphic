@@ -79,7 +79,7 @@ module LiquidVectorGraphic
 
     def apply_source_to(h)
       return h unless h.has_key?(:source)
-      h.deep_merge!({ collection: FormOptions::Source.new(h.delete(:source), parent: parent).form_options })
+      h.deep_merge!({ collection: FormOptions::Source.new(h.delete(:source), parent).form_options })
     end
 
     def apply_value_to(h)
