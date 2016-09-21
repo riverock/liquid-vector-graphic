@@ -25,6 +25,16 @@ module LiquidVectorGraphic
           subject
         end
       end
+
+      describe '#find' do
+        let(:value) { 1 }
+        subject { super().find(value) }
+
+        it 'calls find on parent with value passed in' do
+          expect(foo_source).to receive(:find).with(value)
+          subject
+        end
+      end
     end
   end
 end
