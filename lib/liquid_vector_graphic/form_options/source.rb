@@ -19,6 +19,10 @@ module LiquidVectorGraphic
           []
         end
       end
+
+      def find(value)
+        parent.source_for(resource, scope).find(value)
+      end
     end
   end
 end
