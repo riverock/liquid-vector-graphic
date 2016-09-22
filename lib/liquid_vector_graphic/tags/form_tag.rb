@@ -21,7 +21,7 @@ module LiquidVectorGraphic
       def form_value
         if (tag_source = form_tag_options[:source])
           id = form_values[current_tag_name] || form_tag_options[:default]
-          if drop = find_source_value(tag_source, id)
+          if (drop = find_source_value(tag_source, id))
             current_context.merge({current_tag_name => drop})
           end
           drop.present? ? (drop.try(:display_value) || '') : ''
