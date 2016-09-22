@@ -19,7 +19,21 @@ module LiquidVectorGraphic
       end
 
       def form_value
-        form_values[current_tag_name]
+        if (tag_source = form_tag_options[:source])
+          id = form_values[current_tag_name] || form_tag_options[:default]
+          if (drop = find_source_value(tag_source, id))
+            current_context.merge({current_tag_name => drop})
+          end
+          drop.present? ? (drop.try(:display_value) || '') : ''
+        else
+          form_values[current_tag_name]
+        end
+      end
+
+      def find_source_value(tag_source, id)
+        if id.present?
+          FormOptions::Source.new(tag_source, parent).find(id)
+        end
       end
 
       def form_values
@@ -35,6 +49,9 @@ module LiquidVectorGraphic
         form_stack << form_tag_options
       end
 
+      def parent
+        current_context.environments.first['_parent'] || {}
+      end
     end
   end
 end

@@ -1,6 +1,5 @@
 require 'liquid_vector_graphic/version'
-require 'active_support/inflector'
-require 'active_support/core_ext/object/blank'
+require 'active_support/all'
 require 'solid'
 require 'liquid_vector_graphic/template'
 require 'liquid_vector_graphic/query_template'

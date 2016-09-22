@@ -94,14 +94,16 @@ describe LiquidVectorGraphic::Template do
     end
 
     it 'Turns the source into a collection' do
-      subject.render()
+      parent = double(:parent, source_for: FooSource.new)
+      subject.render({ '_parent' => parent })
       expect(subject.form_fields_params).to include(
         ['foorbar', collection: [[:id, :name], [1234, 'foobar']], selected: 'abcdef', as: 'select']
       )
     end
 
     it 'sets value if one has already been selected' do
-      subject.render({ '_form_values' => { 'zipcode' => 12345, 'blar' => 'foobazshoe', 'foorbar' => 'zxcvbnm' } })
+      parent = double(:parent, source_for: FooSource.new)
+      subject.render({ '_form_values' => { 'zipcode' => 12345, 'blar' => 'foobazshoe', 'foorbar' => 'zxcvbnm' }, '_parent' => parent })
       expect(subject.form_fields_params).to include(
         ['zipcode', input_html: { value: 12345 }],
         ['blar', { array: ["one", 2], input_html: { value: 'foobazshoe' } }],

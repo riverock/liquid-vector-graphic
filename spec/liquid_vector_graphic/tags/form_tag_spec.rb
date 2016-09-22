@@ -45,6 +45,60 @@ module LiquidVectorGraphic
             expect { template.render('_form_stack' => []) }.to raise_error NoNameOnFormTagError
           end
         end
+
+        context 'tag with source attribute' do
+          let(:tag_source) { 'foo/bar' }
+          let(:template) do
+            Solid::Template.parse(%(
+              {% form_field name: 'foobar321', source: '#{tag_source}' %}
+            ))
+          end
+          let(:parent) { double(:parent) }
+
+          it 'renders empty string when no selected value passed in' do
+            expect(template.render('_form_stack' => []).strip).to eq ""
+          end
+
+          it 'calls FormOptions::Source' do
+            expect(FormOptions::Source).to receive(:new).with(tag_source, parent)
+            template.render('_form_stack' => [], '_form_values' => { 'foobar321' => '1' }, '_parent' => parent)
+          end
+
+          context 'finding source value' do
+            let(:form_options_source) { FormOptions::Source.new(tag_source, parent) }
+            let(:drop) { { 'baz' => 'bar' } }
+            let(:template) do
+              Solid::Template.parse(%(
+                {% form_field name: 'foobar321', source: '#{tag_source}', default: '100' %}
+                {{ foobar321.baz }}
+              ))
+            end
+
+            before do
+              allow(FormOptions::Source).to receive(:new).and_return(form_options_source)
+              allow(form_options_source).to receive(:find).and_return(drop)
+            end
+
+            it 'calls FormOptions::Source#find with passed in form value' do
+              expect(form_options_source).to receive(:find).with('1')
+              template.render('_form_stack' => [], '_form_values' => { 'foobar321' => '1' }, '_parent' => parent)
+            end
+
+            it 'calls FormOptions::Source#find with default value if none passed in' do
+              expect(form_options_source).to receive(:find).with('100')
+              template.render('_form_stack' => [], '_parent' => parent)
+            end
+
+            it 'trys to get display_value from source value' do
+              expect(drop).to receive(:try).with(:display_value)
+              template.render('_form_stack' => [], '_parent' => parent)
+            end
+
+            it 'injects drop into liquid render context' do
+              expect(template.render('_form_stack' => [], '_parent' => parent)).to include('bar')
+            end
+          end
+        end
       end
 
       describe '#form_stack' do
