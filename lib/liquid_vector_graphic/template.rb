@@ -54,8 +54,8 @@ module LiquidVectorGraphic
 
     def form_group_order
       @form_group_order = begin
-        names_and_positions = form_stack.map { |f| { f[:group_name] => f[:group_position] } }
-        names_and_positions.keep_if { |k| k.values.first.present? }
+        names_and_positions = form_stack.map { |f| { f[:group_name] => (f[:group_position] || 999) } }
+        names_and_positions.keep_if { |k| k.keys.first.present? }
         names_and_positions.push({ "Default" => 1000 }).uniq! { |group| group.keys }
         names_and_positions.sort_by { |z| z.values.first }
       end
