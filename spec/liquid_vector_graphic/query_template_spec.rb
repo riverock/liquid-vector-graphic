@@ -28,7 +28,7 @@ module LiquidVectorGraphic
       context "no base date" do
         let(:method) { 'past_datetime' }
         let(:calculated_date) do
-          Date.today.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
+          Date.today.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%SZ")
         end
 
         subject { super().render('_form_values' => form_values) }
@@ -39,7 +39,7 @@ module LiquidVectorGraphic
         let(:method) { 'past_datetime' }
         let(:base_date) { Date.today.next_day(10) }
         let(:calculated_date) do
-          base_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
+          base_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%SZ")
         end
 
         subject { super().render('_form_values' => form_values, '_base_date' => base_date) }

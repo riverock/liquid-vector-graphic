@@ -123,7 +123,7 @@ module LiquidVectorGraphic
             let(:method) { 'past_datetime' }
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
-              calculated_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
+              calculated_date.prev_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%SZ")
             end
 
             it 'calculates correct date based on Date.today' do\
@@ -144,7 +144,7 @@ module LiquidVectorGraphic
             let(:method) { 'future_datetime' }
             let(:expected_date) do
               calculated_date = (base_date || Date.today)
-              calculated_date.next_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%S")
+              calculated_date.next_day(form_values['foo_bar'].to_i).strftime("%Y-%m-%dT%H:%M:%SZ")
             end
 
             it 'calculates correct date based on Date.today' do
