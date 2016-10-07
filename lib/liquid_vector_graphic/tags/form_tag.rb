@@ -73,19 +73,19 @@ module LiquidVectorGraphic
       end
 
       def past_date
-        calculated_date(:prev_day).strftime(default_date_format)
+        calculated_date(:prev_day).strftime(date_format)
       end
 
       def future_date
-        calculated_date(:next_day).strftime(default_date_format)
+        calculated_date(:next_day).strftime(date_format)
       end
 
       def past_datetime
-        calculated_date(:prev_day).strftime(default_datetime_format)
+        calculated_date(:prev_day).strftime(datetime_format)
       end
 
       def future_datetime
-        calculated_date(:next_day).strftime(default_datetime_format)
+        calculated_date(:next_day).strftime(datetime_format)
       end
 
       def raw_value
@@ -102,11 +102,11 @@ module LiquidVectorGraphic
         (base_date || Date.today).send(operation, raw_value.to_i)
       end
 
-      def default_date_format
+      def date_format
         strftime_string || '%m/%d/%Y'
       end
 
-      def default_datetime_format
+      def datetime_format
         strftime_string || '%m/%d/%Y at %H:%M'
       end
 
