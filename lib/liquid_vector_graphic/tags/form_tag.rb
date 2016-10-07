@@ -33,11 +33,7 @@ module LiquidVectorGraphic
         if (method = form_tag_options.delete(:method)) && raw_value.present?
           verify_and_call(method.to_sym)
         elsif (tag_source = form_tag_options[:source])
-          id = form_values[current_tag_name] || form_tag_options[:default]
-          if (drop = find_source_value(tag_source, id))
-            current_context.merge({current_tag_name => drop})
-          end
-          drop.present? ? (drop.try(:display_value) || '') : ''
+          handle_tag_with_source(tag_source)
         else
           form_values[current_tag_name]
         end
@@ -112,6 +108,14 @@ module LiquidVectorGraphic
 
       def default_datetime_format
         strftime_string || '%m/%d/%Y at %H:%M'
+      end
+
+      def handle_tag_with_source(tag_source)
+        id = form_values[current_tag_name] || form_tag_options[:default]
+        if (drop = find_source_value(tag_source, id))
+          current_context.merge({current_tag_name => drop})
+        end
+        drop.present? ? (drop.try(:display_value) || '') : ''
       end
     end
   end
