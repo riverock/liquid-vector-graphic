@@ -152,6 +152,36 @@ describe LiquidVectorGraphic::Template do
       it { is_expected.to_not include('barfiz') }
       it { is_expected.to include('foobarfoo') }
     end
+
+    context 'date calculations' do
+      let(:template_handle) do
+        StringIO.new(%(
+          {% form_field name: 'date_field', collection: [10, 20], method: '#{method}' %}
+        ))
+      end
+      let(:form_values) { { 'date_field' => '20' } }
+
+      context "no base date" do
+        let(:method) { 'past_date' }
+        let(:calculated_date) do
+          Date.today.prev_day(form_values['date_field'].to_i).strftime("%m/%d/%Y")
+        end
+
+        subject { super().render('_form_values' => form_values).strip }
+        it { is_expected.to eq calculated_date }
+      end
+
+      context "with base date" do
+        let(:method) { 'past_datetime' }
+        let(:base_date) { Date.today.next_day(10) }
+        let(:calculated_date) do
+          base_date.prev_day(form_values['date_field'].to_i).strftime("%m/%d/%Y at %H:%M")
+        end
+
+        subject { super().render('_form_values' => form_values, '_base_date' => base_date).strip }
+        it { is_expected.to eq calculated_date }
+      end
+    end
   end
 
   describe '#template' do

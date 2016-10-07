@@ -6,9 +6,10 @@ module LiquidVectorGraphic
     class FormTag < Solid::Tag
       tag_name :form_field
 
-      attr_accessor :form_tag_options
+      attr_accessor :form_tag_options, :strftime_string
 
       def display(form_tag_options)
+        self.strftime_string = form_tag_options.delete(:strftime)
         self.form_tag_options = form_tag_options
 
         add_to_form_stack!
@@ -29,12 +30,10 @@ module LiquidVectorGraphic
       end
 
       def form_value
-        if (tag_source = form_tag_options[:source])
-          id = form_values[current_tag_name] || form_tag_options[:default]
-          if (drop = find_source_value(tag_source, id))
-            current_context.merge({current_tag_name => drop})
-          end
-          drop.present? ? (drop.try(:display_value) || '') : ''
+        if (method = form_tag_options.delete(:method)) && raw_value.present?
+          verify_and_call(method.to_sym)
+        elsif (tag_source = form_tag_options[:source])
+          handle_tag_with_source(tag_source)
         else
           form_values[current_tag_name]
         end
@@ -74,19 +73,19 @@ module LiquidVectorGraphic
       end
 
       def past_date
-        calculated_date(:prev_day).strftime("%Y-%m-%d")
+        calculated_date(:prev_day).strftime(date_format)
       end
 
       def future_date
-        calculated_date(:next_day).strftime("%Y-%m-%d")
+        calculated_date(:next_day).strftime(date_format)
       end
 
       def past_datetime
-        calculated_date(:prev_day).strftime("%Y-%m-%dT%H:%M:%SZ")
+        calculated_date(:prev_day).strftime(datetime_format)
       end
 
       def future_datetime
-        calculated_date(:next_day).strftime("%Y-%m-%dT%H:%M:%SZ")
+        calculated_date(:next_day).strftime(datetime_format)
       end
 
       def raw_value
@@ -101,6 +100,22 @@ module LiquidVectorGraphic
 
       def calculated_date(operation)
         (base_date || Date.today).send(operation, raw_value.to_i)
+      end
+
+      def date_format
+        strftime_string || '%m/%d/%Y'
+      end
+
+      def datetime_format
+        strftime_string || '%m/%d/%Y at %H:%M'
+      end
+
+      def handle_tag_with_source(tag_source)
+        id = form_values[current_tag_name] || form_tag_options[:default]
+        if (drop = find_source_value(tag_source, id))
+          current_context.merge({current_tag_name => drop})
+        end
+        drop.present? ? (drop.try(:display_value) || '') : ''
       end
     end
   end

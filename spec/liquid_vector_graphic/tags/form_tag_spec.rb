@@ -18,7 +18,6 @@ module LiquidVectorGraphic
         end
 
         context 'default value' do
-
           context 'text fields' do
             let(:template) do
               Solid::Template.parse(%(
@@ -31,7 +30,91 @@ module LiquidVectorGraphic
               expect(out).to include('barbaz')
             end
           end
+        end
 
+        context 'calculated dates' do
+          let(:template) do
+            Solid::Template.parse(%(
+              {% form_field name: 'foobar321', collection: [10, 20], method: '#{method}' %}
+            ))
+          end
+          let(:form_values) { { 'foobar321' => '10' } }
+
+          context 'past_date' do
+            let(:method) { 'past_date' }
+            let(:calculated_date) do
+              Date.today.prev_day(form_values['foobar321'].to_i).strftime("%m/%d/%Y")
+            end
+
+            subject { template.render({ '_form_values' => form_values, '_form_stack' => [] }).strip }
+
+            it { is_expected.to eq calculated_date }
+          end
+
+          context 'past_datetime' do
+            let(:method) { 'past_datetime' }
+            let(:calculated_date) do
+              Date.today.prev_day(form_values['foobar321'].to_i).strftime("%m/%d/%Y at %H:%M")
+            end
+
+            subject { template.render({ '_form_values' => form_values, '_form_stack' => [] }).strip }
+
+            it { is_expected.to eq calculated_date }
+          end
+
+          context 'future_date' do
+            let(:method) { 'future_date' }
+            let(:calculated_date) do
+              Date.today.next_day(form_values['foobar321'].to_i).strftime("%m/%d/%Y")
+            end
+
+            subject { template.render({ '_form_values' => form_values, '_form_stack' => [] }).strip }
+
+            it { is_expected.to eq calculated_date }
+          end
+
+          context 'future_datetime' do
+            let(:method) { 'future_datetime' }
+            let(:calculated_date) do
+              Date.today.next_day(form_values['foobar321'].to_i).strftime("%m/%d/%Y at %H:%M")
+            end
+
+            subject { template.render({ '_form_values' => form_values, '_form_stack' => [] }).strip }
+
+            it { is_expected.to eq calculated_date }
+          end
+
+          context 'passing in strftime string' do
+            let(:template) do
+              Solid::Template.parse(%(
+                {% form_field name: 'foobar321', collection: [10, 20], method: '#{method}', strftime: '#{strftime}' %}
+              ))
+            end
+
+            context 'past_date' do
+              let(:method) { 'past_date' }
+              let(:strftime) { '%m/%d/%y' }
+              let(:calculated_date) do
+                Date.today.prev_day(form_values['foobar321'].to_i).strftime(strftime)
+              end
+
+              subject { template.render({ '_form_values' => form_values, '_form_stack' => [] }).strip }
+
+              it { is_expected.to eq calculated_date }
+            end
+
+            context 'past_datetime' do
+              let(:method) { 'past_datetime' }
+              let(:strftime) { '%m/%d/%y at %H' }
+              let(:calculated_date) do
+                Date.today.prev_day(form_values['foobar321'].to_i).strftime(strftime)
+              end
+
+              subject { template.render({ '_form_values' => form_values, '_form_stack' => [] }).strip }
+
+              it { is_expected.to eq calculated_date }
+            end
+          end
         end
 
         context 'no name given to tag' do
