@@ -89,6 +89,21 @@ module LiquidVectorGraphic
                 expect(template.render(new_opts)).to eq expected_query
               end
             end
+
+            context 'strftime passed in' do
+              let(:strftime) { '%y-%d-%m' }
+              let(:expected_date) do
+                calculated_date = (base_date || Date.today)
+                calculated_date.prev_day(form_values['foo_bar'].to_i).strftime(strftime)
+              end
+              let(:query_field) do
+                "{% query_field name: 'foo_bar', collection: [10, 20], method: '#{method}', strftime: '#{strftime}' %}"
+              end
+
+              it 'uses the passed in strftime' do
+                expect(template.render(opts)).to eq expected_query
+              end
+            end
           end
 
           context 'future_date method' do
@@ -108,6 +123,21 @@ module LiquidVectorGraphic
 
               it 'calculates correct date based on _base_date' do
                 expect(template.render(new_opts)).to eq expected_query
+              end
+            end
+
+            context 'strftime passed in' do
+              let(:strftime) { '%y-%d-%m' }
+              let(:expected_date) do
+                calculated_date = (base_date || Date.today)
+                calculated_date.next_day(form_values['foo_bar'].to_i).strftime(strftime)
+              end
+              let(:query_field) do
+                "{% query_field name: 'foo_bar', collection: [10, 20], method: '#{method}', strftime: '#{strftime}' %}"
+              end
+
+              it 'uses the passed in strftime' do
+                expect(template.render(opts)).to eq expected_query
               end
             end
           end
@@ -138,6 +168,21 @@ module LiquidVectorGraphic
                 expect(template.render(new_opts)).to eq expected_query
               end
             end
+
+            context 'strftime passed in' do
+              let(:strftime) { '%y-%d-%mT%H' }
+              let(:expected_date) do
+                calculated_date = (base_date || Date.today)
+                calculated_date.prev_day(form_values['foo_bar'].to_i).strftime(strftime)
+              end
+              let(:query_field) do
+                "{% query_field name: 'foo_bar', collection: [10, 20], method: '#{method}', strftime: '#{strftime}' %}"
+              end
+
+              it 'uses the passed in strftime' do
+                expect(template.render(opts)).to eq expected_query
+              end
+            end
           end
 
           context 'future_datetime method' do
@@ -157,6 +202,21 @@ module LiquidVectorGraphic
 
               it 'calculates correct date based on _base_date' do
                 expect(template.render(new_opts)).to eq expected_query
+              end
+            end
+
+            context 'strftime passed in' do
+              let(:strftime) { '%y-%d-%mT%H' }
+              let(:expected_date) do
+                calculated_date = (base_date || Date.today)
+                calculated_date.next_day(form_values['foo_bar'].to_i).strftime(strftime)
+              end
+              let(:query_field) do
+                "{% query_field name: 'foo_bar', collection: [10, 20], method: '#{method}', strftime: '#{strftime}' %}"
+              end
+
+              it 'uses the passed in strftime' do
+                expect(template.render(opts)).to eq expected_query
               end
             end
           end

@@ -6,11 +6,11 @@ module LiquidVectorGraphic
       private
 
       def default_date_format
-        '%Y-%m-%d'
+        strftime_string || '%Y-%m-%d'
       end
 
       def default_datetime_format
-        '%Y-%m-%dT%H:%M:%SZ'
+        strftime_string || '%Y-%m-%dT%H:%M:%SZ'
       end
     end
   end
