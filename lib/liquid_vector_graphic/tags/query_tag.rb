@@ -41,11 +41,11 @@ module LiquidVectorGraphic
       end
 
       def past_datetime
-        calculated_date(:prev_day).strftime("%Y-%m-%dT%H:%M:%S")
+        calculated_date(:prev_day).strftime("%Y-%m-%dT%H:%M:%SZ")
       end
 
       def future_datetime
-        calculated_date(:next_day).strftime("%Y-%m-%dT%H:%M:%S")
+        calculated_date(:next_day).strftime("%Y-%m-%dT%H:%M:%SZ")
       end
 
       def raw_value
