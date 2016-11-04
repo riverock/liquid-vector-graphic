@@ -117,7 +117,7 @@ module LiquidVectorGraphic
     def formtasticize_groups(groups)
       groups.inject({}) do |new_hash, array|
         new_hash.merge!({
-          array[0] => array[1].map { |v| [v.delete(:name), **v] }
+          array[0] => [*array[1]].map { |v| [v.delete(:name), **v] }
         })
       end
     end
