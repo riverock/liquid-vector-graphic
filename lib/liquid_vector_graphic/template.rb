@@ -65,6 +65,7 @@ module LiquidVectorGraphic
       fdup = form_field.dup
       fdup = apply_source_to(fdup)
       fdup = apply_value_to(fdup)
+      fdup = apply_misc_input_html_to(fdup)
       fdup = apply_required_to(fdup)
       fdup = remove_position_from(fdup)
       fdup
@@ -89,6 +90,11 @@ module LiquidVectorGraphic
       h.deep_merge!({ input_html: { value: form_values[h[:name]] || default } })
     end
 
+    def apply_misc_input_html_to(h)
+      h.deep_merge!({ input_html: { multiple: h.delete(:multiple) } }) if h[:multiple].present?
+      h
+    end
+
     def apply_required_to(h)
       return h unless h[:required].present?
       h.deep_merge!({ input_html: { required: h.delete(:required) } })
@@ -96,7 +102,7 @@ module LiquidVectorGraphic
 
     def apply_select_default_to(h)
       default = h.delete(:default)
-      h.deep_merge!({ selected: form_values[h[:name]] || default })
+      h.deep_merge!({ input_html: { selected: form_values[h[:name]] || default } })
     end
 
     def remove_position_from(h)

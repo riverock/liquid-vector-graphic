@@ -30,6 +30,19 @@ module LiquidVectorGraphic
               expect(out).to include('barbaz')
             end
           end
+
+          context 'collection fields' do
+            let(:template) do
+              Solid::Template.parse(%(
+                {% form_field name: 'foobar321', collection: ['one', 'two'], default: 'two' %}
+              ))
+            end
+
+            it 'uses the default value without value set' do
+              out = template.render('_form_stack' => [])
+              expect(out).to include('two')
+            end
+          end
         end
 
         context 'calculated dates' do
