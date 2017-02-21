@@ -13,11 +13,19 @@ module LiquidVectorGraphic
         self.form_tag_options = form_tag_options
 
         add_to_form_stack!
-        form_value || form_tag_options[:default]
+        inject_value_to_environment
       end
 
       def form_stack
         current_context.environments.first['_form_stack']
+      end
+
+      def inject_value_to_environment
+        value = form_value || form_tag_options[:default]
+        current_context.environments.first['form_values'] ||= {}
+        hash = { current_tag_name => value }
+        current_context.environments.first['form_values'].merge!(hash)
+        value
       end
 
       def valid_methods

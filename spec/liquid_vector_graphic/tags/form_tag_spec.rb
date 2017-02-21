@@ -6,6 +6,7 @@ module LiquidVectorGraphic
           let(:template) do
             Solid::Template.parse(%(
               {% form_field name: 'foobar321' %}
+              Value: {{ form_values.foobar321 }}
             ))
           end
 
@@ -15,6 +16,11 @@ module LiquidVectorGraphic
             out = template.render('_form_values' => form_values, '_form_stack' => [])
             expect(out).to include('blar')
           end
+
+          it 'Captures value for later use' do
+            out = template.render('_form_values' => form_values, '_form_stack' => [])
+            expect(out).to include('Value: blar')
+          end
         end
 
         context 'default value' do
@@ -22,6 +28,7 @@ module LiquidVectorGraphic
             let(:template) do
               Solid::Template.parse(%(
                 {% form_field name: 'foobar321', default: 'barbaz' %}
+                Value: {{ form_values.foobar321 }}
               ))
             end
 
@@ -29,18 +36,29 @@ module LiquidVectorGraphic
               out = template.render('_form_stack' => [])
               expect(out).to include('barbaz')
             end
+
+            it 'Captures value for later use' do
+              out = template.render('_form_stack' => [])
+              expect(out).to include('Value: barbaz')
+            end
           end
 
           context 'collection fields' do
             let(:template) do
               Solid::Template.parse(%(
                 {% form_field name: 'foobar321', collection: ['one', 'two'], default: 'two' %}
+                Value: {{ form_values.foobar321 }}
               ))
             end
 
             it 'uses the default value without value set' do
               out = template.render('_form_stack' => [])
               expect(out).to include('two')
+            end
+
+            it 'Captures value for later use' do
+              out = template.render('_form_stack' => [])
+              expect(out).to include('Value: two')
             end
           end
         end
