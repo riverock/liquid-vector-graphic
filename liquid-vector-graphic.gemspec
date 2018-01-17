@@ -2,7 +2,7 @@
 require_relative 'lib/liquid_vector_graphic/version'
 
 Gem::Specification.new do |spec|
-  spec.required_ruby_version  = '>= 2.3.1'
+  spec.required_ruby_version  = '>= 2.4.0'
 
   spec.name                   = "liquid-vector-graphic"
   spec.version                = LiquidVectorGraphic::VERSION
@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'locomotivecms-solid', '~> 4.0.1'
+  spec.add_runtime_dependency 'liquid-c'
   spec.add_runtime_dependency 'activesupport', '>= 4.0.0'
 
   spec.add_development_dependency "bundler", "~> 1.12"
