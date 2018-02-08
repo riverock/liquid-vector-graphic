@@ -85,6 +85,7 @@ module LiquidVectorGraphic
 
     def apply_value_to(h)
       return apply_select_default_to(h) if h[:as] == 'select'
+      return apply_boolean_default_to(h) if h[:as] == 'boolean'
       return h unless form_values[h[:name]].present? || h[:default].present?
       default = h.delete(:default)
       h.deep_merge!({ input_html: { value: form_values[h[:name]] || default } })
@@ -103,6 +104,27 @@ module LiquidVectorGraphic
     def apply_select_default_to(h)
       default = h.delete(:default)
       h.deep_merge!({ input_html: { selected: form_values[h[:name]] || default } })
+    end
+
+
+    # If there's a form value set, and it's greater than zero, we check the box.
+    # If there's a form value set, and it doesn't cast to be > 0 we leave the box.
+    # If both of those fail and there's a default value that casts to be > 0 we check the box.
+    # If all of these tests fail, we just leave the box.
+    # There may be a bug in this logic, but I strongly suggest you work through the above
+    #  and understand what is going on before making any changes to this.
+    def apply_boolean_default_to(h)
+      default = h.delete(:default)
+      form_value = form_values[h[:name]]
+      if form_value.to_i > 0
+        h.deep_merge!({ input_html: { checked: true } })
+      elsif form_value.present?
+        h
+      elsif default.present? && default.to_i > 0
+        h.deep_merge!({ input_html: { checked: true } })
+      else
+        h
+      end
     end
 
     def remove_position_from(h)
