@@ -13,19 +13,11 @@ module LiquidVectorGraphic
         self.form_tag_options = form_tag_options
 
         add_to_form_stack!
-        inject_value_to_environment
+        inject_value_to_environment!
       end
 
       def form_stack
         current_context.environments.first['_form_stack']
-      end
-
-      def inject_value_to_environment
-        value = form_value || form_tag_options[:default]
-        current_context.environments.first['form_values'] ||= {}
-        hash = { current_tag_name => value }
-        current_context.environments.first['form_values'].merge!(hash)
-        value
       end
 
       def valid_methods
@@ -38,13 +30,19 @@ module LiquidVectorGraphic
       end
 
       def form_value
-        if (method = form_tag_options.delete(:method)) && raw_value.present?
-          verify_and_call(method.to_sym)
-        elsif (tag_source = form_tag_options[:source])
-          handle_tag_with_source(tag_source)
-        else
-          form_values[current_tag_name]
+        @form_value ||= begin
+          if (method = form_tag_options.delete(:method)) && raw_value.present?
+            verify_and_call(method.to_sym)
+          elsif (tag_source = form_tag_options[:source])
+            handle_tag_with_source(tag_source)
+          else
+            form_values[current_tag_name]
+          end
         end
+      end
+
+      def value_with_default_applied
+        form_value || form_tag_options[:default]
       end
 
       def find_source_value(tag_source, id)
@@ -63,7 +61,27 @@ module LiquidVectorGraphic
       end
 
       def add_to_form_stack!
-        form_stack << form_tag_options
+        form_stack << form_tag_options unless exclude_from_stack_and_values?
+      end
+
+      # This is what the renderer will output as the conclusion of running this tag. the nil return
+      #  is intentionally explicit N.B.
+      def inject_value_to_environment!
+        current_context.environments.first['form_values'] ||= {}
+        hash = { current_tag_name => value_with_default_applied }
+        current_context.environments.first['form_values'].merge!(hash)
+        if exclude_from_stack_and_values?
+          nil
+        else
+          value_with_default_applied
+        end
+      end
+
+      # We want to apply the default before we decide to exclude something.  The default will
+      # override nil.  If it becomes necessary to allow a nil to come through, we may need to rethink
+      # some of that. N.B.
+      def exclude_from_stack_and_values?
+        form_tag_options[:remove_from_stack_and_values_if_blank] && value_with_default_applied.blank?
       end
 
       def parent

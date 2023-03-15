@@ -7,19 +7,41 @@ module LiquidVectorGraphic
             Solid::Template.parse(%(
               {% form_field name: 'foobar321' %}
               Value: {{ form_values.foobar321 }}
+              {% form_field name: 'barfoo123', remove_from_stack_and_values_if_blank: true, default: nil %}
+              {% form_field name: 'exclude_but_not_nil', remove_from_stack_and_values_if_blank: true, default: 'foo' %}
             ))
           end
 
-          let(:form_values) { { 'foobar321' => 'blar' } }
+          let(:form_values) { { 'foobar321' => 'blar', 'barfoo123' => nil } }
+          let(:form_stack) { [] }
+          let(:out) { template.render('_form_values' => form_values, '_form_stack' => form_stack) }
 
           it 'Renders the value into the template' do
-            out = template.render('_form_values' => form_values, '_form_stack' => [])
             expect(out).to include('blar')
           end
 
           it 'Captures value for later use' do
-            out = template.render('_form_values' => form_values, '_form_stack' => [])
             expect(out).to include('Value: blar')
+          end
+
+          it 'does not include barfoo123 in the form stack' do
+            out
+            expect(form_stack).to_not include(include(name: "barfoo123"))
+          end
+
+          it 'does ont include barfoo123 in the form values' do
+            out
+            expect(form_values).to_not include(:barfoo123)
+          end
+
+          it 'includes exclude_but_not_nil in form stack' do
+            out
+            expect(form_stack).to include(include(name: "exclude_but_not_nil"))
+          end
+
+          it 'includes exclude_but_not_nil in the form values' do
+            out
+            expect(form_values).to include("exclude_but_not_nil" => 'foo')
           end
         end
 
@@ -224,6 +246,8 @@ module LiquidVectorGraphic
             {% form_field name: 'bar', position: 1 %}
             {% form_field name: 'z_no_position' %}
             {% form_field name: 'a_no_position' %}
+            {% form_field name: 'exclude_and_nil', remove_from_stack_and_values_if_blank: true, default: nil %}
+            {% form_field name: 'exclude_but_not_nil', remove_from_stack_and_values_if_blank: true, default: 'foo' %}
           ))
         end
 
@@ -232,7 +256,23 @@ module LiquidVectorGraphic
           expect(form_stack).to include(
             { name: 'blar', array: ['one', 2], position: 0 },
             { name: 'foo', hash: { one: 2, 'three' => '4' }, position: 500 },
-            { name: 'bar', position: 1 }
+            { name: 'bar', position: 1 },
+          )
+        end
+
+        it 'adds form elements that should be excluded if blank but are not blank' do
+          template.render('_form_stack' => form_stack)
+          expect(form_stack).to include(
+            { name: 'exclude_but_not_nil',
+              remove_from_stack_and_values_if_blank: true,
+              default: 'foo' }
+          )
+        end
+
+        it 'excludes the blank and excluded element from the form stack' do
+          template.render('_form_stack' => form_stack)
+          expect(form_stack).to_not include(
+            { name: 'exclude_and_nil' }
           )
         end
 
