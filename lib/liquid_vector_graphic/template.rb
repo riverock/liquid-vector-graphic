@@ -84,7 +84,7 @@ module LiquidVectorGraphic
     end
 
     def apply_value_to(h)
-      return apply_select_default_to(h) if h[:as] == 'select'
+      return apply_select_default_to(h) if h[:as] == 'select' || h[:as] == 'check_boxes'
       return apply_boolean_default_to(h) if h[:as] == 'boolean'
       return h unless form_values[h[:name]].present? || h[:default].present?
       default = h.delete(:default)
