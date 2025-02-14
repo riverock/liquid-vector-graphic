@@ -17,17 +17,19 @@ describe LiquidVectorGraphic::Template do
         {% form_field name: 'blar', array: ['one', 2], position: 158, group_name: 'Group 1', group_position: 20 %}
         {% form_field name: 'foo', hash: { one: 2, 'three' => '4' }, position: 28, group_name: 'Group 2', group_position: 10 %}
         {% form_field name: 'bar', position: 20, group_name: 'Group 1', group_position: 3 %}
-        {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select', group_name: 'Group 2' %}
+          {% form_field name: 'foorbar', source: 'foo/bar', default: 'abcdef', as: 'select', group_name: 'Group 2' %}
         {% form_field name: 'fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], default: ['1', '3'], as: 'select', multiple: true %}
         {% form_field name: 'zipcode', group_name: 'Group 3' %}
         {% form_field name: 'mycollection', collection: ['Name1', 'Name2'] %}
         {% form_field name: 'required_field', required: true %}
         {% form_field name: 'ordered_field', barfoo: 'blar', position: 1 %}
+        {% form_field name: 'some_checkbox', as: 'boolean', default: 1 %}
+        {% form_field name: 'some_other_checkbox', as: 'boolean' %}
       ))
     end
 
     let(:expected_name_order) do
-      %w(ordered_field bar foo blar fizbaz_multiple foorbar mycollection required_field zipcode)
+      %w(ordered_field bar foo blar fizbaz_multiple foorbar mycollection required_field some_checkbox some_other_checkbox zipcode)
     end
 
     it 'returns an array of form field parameters' do
@@ -48,6 +50,46 @@ describe LiquidVectorGraphic::Template do
       names = subject.form_fields_params.map { |form| form.first }
 
       expect(names).to eq expected_name_order
+    end
+
+    context 'boolean fields' do
+
+      it 'sets checked to true when defaulted to checked' do
+        subject.render
+        field = subject.form_fields_params.find { |k,v| k == 'some_checkbox' }
+        expect(field.last[:input_html][:checked]).to eq true
+      end
+
+      it 'removes checked when defaulted to checked' do
+        subject.render('_form_values' => { 'some_checkbox' => '0' })
+        field = subject.form_fields_params.find { |k,v| k == 'some_checkbox' }
+        expect(field.last[:input_html]).to be_nil
+      end
+
+      it 'does not set checked when defaulted to not be checked' do
+        subject.render
+        field = subject.form_fields_params.find { |k,v| k == 'some_other_checkbox' }
+        expect(field.last[:input_html]).to be_nil
+      end
+
+      it 'adds checked when no default' do
+        subject.render('_form_values' => { 'some_other_checkbox' => '1' })
+        field = subject.form_fields_params.find { |k,v| k == 'some_other_checkbox' }
+        expect(field.last[:input_html][:checked]).to eq true
+      end
+
+      it 'leaves unchecked when value does not make sense' do
+        subject.render('_form_values' => { 'some_other_checkbox' => 'rainforest' })
+        field = subject.form_fields_params.find { |k,v| k == 'some_other_checkbox' }
+        expect(field.last[:input_html]).to be_nil
+      end
+
+      it 'sets to unchecked when default value makes sense but form value makes no sense' do
+        subject.render('_form_values' => { 'some_checkbox' => 'rainforest' })
+        field = subject.form_fields_params.find { |k,v| k == 'some_checkbox' }
+        expect(field.last[:input_html]).to be_nil
+      end
+
     end
 
     context 'grouped form fields' do
@@ -185,6 +227,7 @@ describe LiquidVectorGraphic::Template do
       end
     end
   end
+
 
   describe '#template' do
     subject { super().template }
