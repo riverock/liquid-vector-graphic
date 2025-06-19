@@ -2,7 +2,7 @@
 require_relative 'lib/liquid_vector_graphic/version'
 
 Gem::Specification.new do |spec|
-  spec.required_ruby_version  = '>= 2.4.0'
+  spec.required_ruby_version  = '>= 3.1.4'
 
   spec.name                   = "liquid-vector-graphic"
   spec.version                = LiquidVectorGraphic::VERSION
