@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.executables   = []
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'locomotivecms-solid', '~> 4.0.1'
+  spec.add_runtime_dependency 'locomotivecms-solid', '~> 4.0'
   spec.add_runtime_dependency 'activesupport', '>= 4.0.0'
 
   spec.add_development_dependency "bundler", "~> 2.3"
