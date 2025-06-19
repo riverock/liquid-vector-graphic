@@ -35,13 +35,17 @@ describe LiquidVectorGraphic::Template do
     it 'returns an array of form field parameters' do
       subject.render()
       expect(subject.form_fields_params).to include(
-        ['blar', { array: ['one', 2] }],
-        ['foo', { hash: { one: 2, 'three' => '4' } }],
+        ['ordered_field', { barfoo: 'blar' }],
         ['bar', {}],
+        ['foo', { hash: { one: 2, 'three' => '4' } }],
+        ['blar', { array: ['one', 2] }],
+        ["fizbaz_multiple", { collection: [["Label a", "1"], ["Label b", "2"], ["Label c", "3"]], as: "select", input_html: { selected: ["1", "3"], multiple: true } }],
+        ["foorbar", { as: "select", collection: [], input_html: { selected: "abcdef" } }],
         ['mycollection', { collection: ['Name1', 'Name2'] }],
         ['required_field', input_html: { required: true }],
-        ["fizbaz_multiple", { collection: [["Label a", "1"], ["Label b", "2"], ["Label c", "3"]], as: "select", input_html: { multiple: true, selected: ["1", "3"] } }],
-        ["foorbar", { as: "select", collection: [], input_html: { selected: "abcdef" } }]
+        ["some_checkbox", { as: 'boolean', input_html: { checked: true } }],
+        ["some_other_checkbox", { as: 'boolean' }],
+        ['zipcode', {}]
       )
     end
 

@@ -35,7 +35,7 @@ module LiquidVectorGraphic
       sorted_form_stack.map do |form_field|
         form_field = common_field_cleanup(form_field)
         form_field = remove_group_position_from(form_field)
-        [form_field.delete(:name), **remove_group_name_from(form_field)]
+        [form_field.delete(:name), remove_group_name_from(form_field)]
       end
     end
 
@@ -45,7 +45,9 @@ module LiquidVectorGraphic
       new_grouped_fields = {}
       form_group_order.each do |g|
         k = g.keys.first
-        grouped_fields[k].each { |v| v.last.delete(:group_position) }
+        grouped_fields[k].each do |v|
+          v.last.delete(:group_position)
+        end
         values = grouped_fields[k]
         new_grouped_fields.merge!({k => values})
       end
@@ -145,7 +147,7 @@ module LiquidVectorGraphic
     def formtasticize_groups(groups)
       groups.inject({}) do |new_hash, array|
         new_hash.merge!({
-          array[0] => [*array[1]].map { |v| [v.delete(:name), **v] }
+          array[0] => [*array[1]].map { |v| [v.delete(:name), v] }
         })
       end
     end
