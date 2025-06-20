@@ -10,7 +10,7 @@ module LiquidVectorGraphic
 
       def display(form_tag_options)
         self.strftime_string = form_tag_options.delete(:strftime)
-        self.form_tag_options = form_tag_options
+        self.form_tag_options = form_tag_options.with_indifferent_access
 
         add_to_form_stack!
         inject_value_to_environment
