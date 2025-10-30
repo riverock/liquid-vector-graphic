@@ -63,7 +63,7 @@ module LiquidVectorGraphic
       end
 
       def add_to_form_stack!
-        form_stack << form_tag_options
+        form_stack.try(:push, form_tag_options)
       end
 
       def parent
