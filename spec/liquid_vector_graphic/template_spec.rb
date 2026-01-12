@@ -138,7 +138,7 @@ describe LiquidVectorGraphic::Template do
       subject.render()
       fields = subject.form_fields_params
       ordered_field = fields.find { |f| f[0] == 'ordered_field' }
-      expect(ordered_field).to eq ['ordered_field', barfoo: 'blar']
+      expect(ordered_field).to eq ['ordered_field', 'barfoo' => 'blar']
     end
 
     it 'Turns the source into a collection' do
