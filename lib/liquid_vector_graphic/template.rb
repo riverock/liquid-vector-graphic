@@ -70,7 +70,7 @@ module LiquidVectorGraphic
       fdup = apply_misc_input_html_to(fdup)
       fdup = apply_required_to(fdup)
       fdup = remove_position_from(fdup)
-      fdup
+      fdup.to_h.deep_symbolize_keys
     end
 
     def sorted_form_stack
@@ -87,6 +87,7 @@ module LiquidVectorGraphic
 
     def apply_value_to(h)
       return apply_select_default_to(h) if h[:as] == 'select' || h[:as] == 'check_boxes'
+      return apply_select_default_to(h) if h[:collection].present? && (h[:as].blank?)
       return apply_boolean_default_to(h) if h[:as] == 'boolean'
       return h unless form_values[h[:name]].present? || h[:default].present?
       default = h.delete(:default)
@@ -105,7 +106,11 @@ module LiquidVectorGraphic
 
     def apply_select_default_to(h)
       default = h.delete(:default)
-      h.deep_merge!({ input_html: { selected: form_values[h[:name]] || default } })
+      return h if form_values_has_key?(h[:name])
+      return h unless default.present?
+
+      h[:selected] = default
+      h
     end
 
 
@@ -127,6 +132,17 @@ module LiquidVectorGraphic
       else
         h
       end
+    end
+
+    def form_values_has_key?(name)
+      return form_values.key?(name) if form_values.respond_to?(:key?)
+      if form_values.respond_to?(:to_h)
+        values = form_values.to_h
+        return true if values.key?(name)
+        return true if name.respond_to?(:to_sym) && values.key?(name.to_sym)
+        return true if name.respond_to?(:to_s) && values.key?(name.to_s)
+      end
+      false
     end
 
     def remove_position_from(h)

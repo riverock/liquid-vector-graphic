@@ -37,10 +37,10 @@ describe LiquidVectorGraphic::Template do
       expect(subject.form_fields_params).to include(
         ['ordered_field', { barfoo: 'blar' }],
         ['bar', {}],
-        ['foo', { hash: { one: 2, 'three' => '4' } }],
+        ['foo', { hash: { one: 2, three: '4' } }],
         ['blar', { array: ['one', 2] }],
-        ["fizbaz_multiple", { collection: [["Label a", "1"], ["Label b", "2"], ["Label c", "3"]], as: "select", input_html: { selected: ["1", "3"], multiple: true } }],
-        ["foorbar", { as: "select", collection: [], input_html: { selected: "abcdef" } }],
+        ["fizbaz_multiple", { collection: [["Label a", "1"], ["Label b", "2"], ["Label c", "3"]], as: "select", input_html: { multiple: true }, selected: ["1", "3"] }],
+        ["foorbar", { as: "select", collection: [], selected: "abcdef" }],
         ['mycollection', { collection: ['Name1', 'Name2'] }],
         ['required_field', input_html: { required: true }],
         ["some_checkbox", { as: 'boolean', input_html: { checked: true } }],
@@ -138,14 +138,14 @@ describe LiquidVectorGraphic::Template do
       subject.render()
       fields = subject.form_fields_params
       ordered_field = fields.find { |f| f[0] == 'ordered_field' }
-      expect(ordered_field).to eq ['ordered_field', 'barfoo' => 'blar']
+      expect(ordered_field).to eq ['ordered_field', barfoo: 'blar']
     end
 
     it 'Turns the source into a collection' do
       parent = double(:parent, source_for: FooSource.new)
       subject.render({ '_parent' => parent })
       expect(subject.form_fields_params).to include(
-        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], as: 'select', input_html: { selected: 'abcdef' }]
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], as: 'select', selected: 'abcdef']
       )
     end
 
@@ -155,14 +155,14 @@ describe LiquidVectorGraphic::Template do
       expect(subject.form_fields_params).to include(
         ['zipcode', input_html: { value: 12345 }],
         ['blar', { array: ["one", 2], input_html: { value: 'foobazshoe' } }],
-        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], as: 'select', input_html: { selected: 'zxcvbnm' }]
+        ['foorbar', collection: [[:id, :name], [1234, 'foobar']], as: 'select']
       )
     end
 
     it 'sets multiple default values for multiple select' do
       subject.render
       expect(subject.form_fields_params).to include(
-        ['fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], as: 'select', input_html: { selected: ['1', '3'], multiple: true }]
+        ['fizbaz_multiple', collection: [['Label a', '1'], ['Label b', '2'], ['Label c', '3']], as: 'select', input_html: { multiple: true }, selected: ['1', '3']]
       )
     end
 
