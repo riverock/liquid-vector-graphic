@@ -39,6 +39,10 @@ module LiquidVectorGraphic
       end
     end
 
+    def parsed
+      @parsed ||= Liquid::Template.parse(template)
+    end
+
     private
 
     def sort_form_groups(grouped_fields)
@@ -166,10 +170,6 @@ module LiquidVectorGraphic
           array[0] => [*array[1]].map { |v| [v.delete(:name), v] }
         })
       end
-    end
-
-    def parsed
-      Liquid::Template.parse(template)
     end
 
     def position_for(form_field)
