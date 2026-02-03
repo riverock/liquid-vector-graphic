@@ -25,6 +25,7 @@ module LiquidVectorGraphic
         current_context.environments.first['form_values'] ||= {}
         hash = { current_tag_name => value }
         current_context.environments.first['form_values'].merge!(hash)
+        current_context.scopes.first.merge!(hash)
         value
       end
 
