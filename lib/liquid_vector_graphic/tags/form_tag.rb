@@ -25,6 +25,13 @@ module LiquidVectorGraphic
         current_context.environments.first['form_values'] ||= {}
         hash = { current_tag_name => value }
         current_context.environments.first['form_values'].merge!(hash)
+
+        # This makes the form field's value immediately available as a local variable in the
+        #  current template as the name of the form field.  If there's a tag source, we don't
+        #  want to overwrite the value of the source lookup, however, this means that the
+        #  value will not be available in the current scope as a local variable, and will
+        #  need to be captured to be used.  N.B.
+        current_context.scopes.first.merge!(hash) unless tag_source.present?
         value
       end
 
@@ -40,11 +47,15 @@ module LiquidVectorGraphic
       def form_value
         if (method = form_tag_options.delete(:method)) && raw_value.present?
           verify_and_call(method.to_sym)
-        elsif (tag_source = form_tag_options[:source])
+        elsif tag_source.present?
           handle_tag_with_source(tag_source)
         else
           form_values[current_tag_name]
         end
+      end
+
+      def tag_source
+        @tag_source ||= form_tag_options[:source]
       end
 
       def find_source_value(tag_source, id)
